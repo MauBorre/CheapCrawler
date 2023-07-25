@@ -1,0 +1,2 @@
+total_results = 10
+default_article = mate
