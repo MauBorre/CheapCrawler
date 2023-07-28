@@ -2,31 +2,35 @@ import requests
 import bs4
 from output_cleaner import clean_it
 from url_generator import url_generator
-import sys
 from config_parser import total_results, default_article
 
+import sys
+
+
 """
-    Funciona como main() del proyecto.
-    El programa buscara coincidencias en la web bajo parametros especificos, tales como articulo y longitud de lista a mostrar.
-    El chiste es que se haga automaticamente en segundo plano y pueda mostrar notificaciones en el escritorio.
-    La cantidad de elementos generados es configurable desde config.txt.
-    Work in progress...
+    Funcionaba como main() del proyecto.
+    
+    Run crawler.py "your article without quotes"
+
     Mauro Borré
 """
 
-# Run crawler.py "your_article_without_quotes"
+# ejecucion desde shell...
 if len(sys.argv) > 1:
     ARTICULO = ' '.join(sys.argv[1:])
 else:
     # Default
     ARTICULO = default_article
 
-URL = url_generator(ARTICULO)
 
-def scrapePrice(url):
+def scrapePrice(amount, article):
+
+    ARTICULO = article
+    URL = url_generator(ARTICULO)
+    
     mercado_libre_class_price_tag = "andes-money-amount ui-search-price__part shops__price-part ui-search-price__part--medium andes-money-amount--cents-superscript"
     mercado_libre_class_link_tag = "ui-search-item__group__element shops__items-group-details ui-search-link"
-    r = requests.get(url)
+    r = requests.get(URL)
     soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
     # Filters
@@ -44,7 +48,7 @@ def scrapePrice(url):
         outfile.write("\n");outfile.write("\n")
 
         for count, linea in enumerate(my_prices):
-            if count < total_results: 
+            if count < int(amount): 
                 outfile.write("Articulo Nro "+str(count+1)+": ")
                 #outfile.write("$"+linea.get_text())
                 # Si no se usa clean_it el precio no sale bien...
@@ -56,7 +60,13 @@ def scrapePrice(url):
         outfile.close()
     return
 
-scrapePrice(URL)
+def run_crawler(amt, item):
+
+    return scrapePrice(amt, item)
+
+
+if __name__ == '__main__':
+    scrapePrice(total_results, default_article)
 
 """
     TODO 
