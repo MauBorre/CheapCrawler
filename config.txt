@@ -1,2 +1,2 @@
-total_results = 20
-default_article = honda tornado
+total_results = 10
+default_article = mate
